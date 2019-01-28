@@ -4,7 +4,7 @@ _(this is an extension of [Carbon Fields](http://carbonfields.net/) plugin)_
 
 Adds a `urlpicker` field type to Carbon Fields. Install using composer:
 ```cli
-composer require iamntz/carbon-fields-urlpicker
+composer require Kaloyan98/carbon-fields-urlpicker
 ```
 
 (first, make sure you have `"minimum-stability": "dev"` set in `composer.json`)
@@ -52,8 +52,3 @@ function crb_url_picker_test() {
 ```
 
 Note that the `anchor` field will return `0` or `1`, depending on whether the checkbox is ticked next to "Open link in a new tab".
-
-## Found this useful?
-
-You can get [hosting](https://m.do.co/c/c95a44d0e992) (and receive $10 credit!), [donate](https://www.paypal.me/iamntz) or buy me a [gift](http://iamntz.com/wishlist).
-

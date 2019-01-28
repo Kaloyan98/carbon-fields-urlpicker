@@ -3,10 +3,9 @@
   display: inline-block;
   padding-right: 2em;
   word-wrap: break-word;
-  overflow-wrap: break-word;
+  word-wrap: break-word;
   word-break: break-word;
-  cursor: pointer;
-}
+  cursor: pointer; }
 
 .carbon-fields--urlpicker__remove {
   position: absolute;
@@ -14,9 +13,8 @@
   top: 0;
   right: 0;
   font-size: 2em;
-  display: none;
-}
+  display: none; }
 
 .carbon-fields--urlpicker:hover .carbon-fields--urlpicker__remove {
-  display: block;
-}
+  display: block; }
+

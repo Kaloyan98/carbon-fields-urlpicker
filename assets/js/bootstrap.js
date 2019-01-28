@@ -1,7 +1,9 @@
 /**
  * The internal dependencies.
  */
-import { registerFieldComponent } from 'lib/registry';
-import UrlPicker from 'components/field';
+import { registerFieldType } from '@carbon-fields/core';
 
-registerFieldComponent('urlpicker', UrlPicker);
+import UrlPickerField from './components/field';
+
+registerFieldType('urlpicker', UrlPickerField);
+

@@ -10,7 +10,7 @@ class UrlPicker_Field extends Field
 
 	protected $url = '';
 	protected $anchor = '';
-	protected $blank = 0;
+	protected $blank = false;
 
 	/**
 	 * Create a field from a certain type with the specified label.
@@ -27,22 +27,10 @@ class UrlPicker_Field extends Field
 			'blank' => (bool) $this->blank
 		]));
 
-		remove_action('wp_ajax_carbonfields_urlpicker_get_tinymce_popup', [$this, 'get_tinymce_popup']);
-		add_action('wp_ajax_carbonfields_urlpicker_get_tinymce_popup', [$this, 'get_tinymce_popup']);
+		remove_action('carbonfields_urlpicker_get_tinymce_popup', [$this, 'get_tinymce_popup']);
+		add_action('carbonfields_urlpicker_get_tinymce_popup', [$this, 'get_tinymce_popup']);
 
 		parent::__construct($type, $name, $label);
-	}
-
-	/**
-	 * Prepare the field type for use
-	 * Called once per field type when activated
-	 */
-	public static function field_type_activated()
-	{
-		$dir = \Carbon_Field_UrlPicker\DIR . '/languages/';
-		$locale = get_locale();
-		$path = $dir . $locale . '.mo';
-		load_textdomain('carbon-field-urlpicker', $path);
 	}
 
 	/**
@@ -54,21 +42,21 @@ class UrlPicker_Field extends Field
 		$root_uri = \Carbon_Fields\Carbon_Fields::directory_to_url(\Carbon_Field_UrlPicker\DIR);
 
 		# Enqueue JS
-		wp_register_script('carbon-field-urlpicker', $root_uri . '/assets/js/bundle.js', ['carbon-fields-boot', 'wplink', 'wpdialogs']);
-		wp_localize_script('carbon-field-urlpicker', 'carbonFieldsUrlpickerL10n', [
-			'select_link' => __('Select Link'),
-			'remove_link' => __('Remove Link'),
+		wp_register_script('carbon-field-urlpicker-script', $root_uri . '/build/bundle.js', ['carbon-fields-core', 'wplink', 'wpdialogs']);
+		wp_localize_script('carbon-field-urlpicker-script', 'carbonFieldsUrlPickerData', [
+			'select_link' => __('Select Link', 'crb'),
+			'remove_link' => __('Remove Link', 'crb'),
 			'home_url' => home_url(),
 		]);
-		wp_enqueue_script('carbon-field-urlpicker');
+		wp_enqueue_script('carbon-field-urlpicker-script');
 
 		# Enqueue CSS
-		wp_enqueue_style('carbon-field-urlpicker', $root_uri . '/assets/css/field.css', ['editor-buttons']);
+		wp_enqueue_style('carbon-field-urlpicker-styles', $root_uri . '/build/bundle.css', ['editor-buttons']);
 	}
 
 	public function get_tinymce_popup()
 	{
-		require_once ABSPATH . "wp-includes/class-wp-editor.php";
+		require_once ABSPATH . 'wp-includes/class-wp-editor.php';
 		\_WP_Editors::wp_link_dialog();
 		die();
 	}
@@ -122,3 +110,5 @@ class UrlPicker_Field extends Field
 		return $field_data;
 	}
 }
+
+

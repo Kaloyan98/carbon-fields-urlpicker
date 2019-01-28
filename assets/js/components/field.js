@@ -8,66 +8,108 @@ import { compose, withHandlers, setStatic } from 'recompose';
 /**
  * The internal dependencies.
  */
-import Field from 'fields/components/field';
-import withStore from 'fields/decorators/with-store';
-import withSetup from 'fields/decorators/with-setup';
+import { Component } from '@wordpress/element'
 
 import {
 	maybeLoadTinyMcerPicker,
 	openTinyMceLinkEditor,
 } from './LinkPicker.js';
 
-export const UrlPicker = ({ name, field, resetFieldValues, openUrlPicker }) => {
-	return (
-		<Field field={field}>
-			{field.value.url.length > 0 ? (
+import '../../scss/field.scss';
+
+class UrlPickerField extends Component {
+	resetFieldValues = (event) => {
+		const { id, onChange } = this.props;
+
+		onChange(id, {
+			url: '',
+			anchor: '',
+			blank: false,
+		});
+	}
+
+	openURLModal = (event) => {
+		let target = event.currentTarget;
+
+		const { id, field, onChange } = this.props;
+
+		maybeLoadTinyMcerPicker()
+			.then(() => {
+				return openTinyMceLinkEditor(target, field);
+			})
+			.then((data) => {
+				onChange(id, { ...data });
+			});
+		return false;
+	}
+
+	render() {
+		const { id, name, field, value } = this.props;
+
+		let fieldData = {
+			url: '',
+			anchor: '',
+			blank: false
+		};
+
+		// merge the objects
+		if (field.value && field.value.url) {
+			fieldData = {...fieldData, ...field.value};
+		} else if (value && value.url) {
+			fieldData = {...fieldData, ...value};
+		}
+
+		return(
+			<div id={ id }>
+			{fieldData.url.length > 0 ? (
 				<span
 					className="carbon-fields--urlpicker"
-					data-is-blank={field.value.blank ? 1 : 0}>
-					<span onClick={openUrlPicker}>
-						<strong>{field.value.url.replace(`${carbonFieldsUrlpickerL10n.home_url}`, '')}</strong>
+					data-is-blank={fieldData.blank ? 1 : 0}>
+					<span onClick={this.openURLModal}>
+						<strong>{fieldData.url.replace(`${carbonFieldsUrlPickerData.home_url}`, '')}</strong>
 						<br />
-						<small><em>{field.value.anchor}</em></small>
+						<small><em>{fieldData.anchor}</em></small>
 					</span>
 
 					<span
 						className="carbon-fields--urlpicker__remove"
-						onClick={resetFieldValues}
-						title={carbonFieldsUrlpickerL10n.remove_link}>
+						onClick={this.resetFieldValues}
+						title={carbonFieldsUrlPickerData.remove_link}>
 						&times;
 					</span>
 				</span>
 			) : (
-				<span className="button button-secondary" onClick={openUrlPicker}>
-					{carbonFieldsUrlpickerL10n.select_link}
+				<span className="button button-secondary" onClick={this.openURLModal}>
+					{carbonFieldsUrlPickerData.select_link}
 				</span>
 			)}
 
 			<input
 				name={`${name}[url]`}
-				value={field.value.url}
+				value={fieldData.url}
 				type="hidden"
 				readOnly
 			/>
 
 			<input
 				name={`${name}[anchor]`}
-				value={field.value.anchor}
+				value={fieldData.anchor}
 				type="hidden"
 				readOnly
 			/>
 
 			<input
 				name={`${name}[blank]`}
-				value={field.value.blank}
+				value={fieldData.blank}
 				type="hidden"
 				readOnly
 			/>
-		</Field>
-	);
-};
+		</div>
+		);
+	}
+}
 
-UrlPicker.propTypes = {
+UrlPickerField.propTypes = {
 	name: PropTypes.string,
 	field: PropTypes.shape({
 		id: PropTypes.string,
@@ -76,37 +118,7 @@ UrlPicker.propTypes = {
 			anchor: PropTypes.string,
 			blank: PropTypes.boolean,
 		}),
-	}),
-	resetFieldValues: PropTypes.func,
-	openUrlPicker: PropTypes.func,
+	})
 };
 
-export const enhance = compose(
-	withStore(),
-	withSetup(),
-
-	withHandlers({
-		resetFieldValues: ({ field, setFieldValue }) => ({ target: { value } }) => {
-			setFieldValue(field.id, {
-				url: '',
-				anchor: '',
-				blank: 0,
-			});
-		},
-
-		openUrlPicker: ({ field, setFieldValue }) => (e) => {
-			let target = e.currentTarget;
-
-			maybeLoadTinyMcerPicker()
-				.then(() => {
-					return openTinyMceLinkEditor(target, field);
-				})
-				.then((data) => {
-					setFieldValue(field.id, { ...data });
-				});
-			return false;
-		},
-	}),
-);
-
-export default setStatic('type', ['urlpicker'])(enhance(UrlPicker));
+export default UrlPickerField;
