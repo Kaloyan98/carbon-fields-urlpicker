@@ -16,7 +16,9 @@
             "email": "kaloqn665@gmail.com"
         }
     ],
-    "require": { },
+    "require": {
+        "htmlburger/carbon-fields": "^3"
+    },
     "autoload": {
         "files": [
             "field.php"
