@@ -8,6 +8,10 @@
     "license": "GPL-2.0+",
     "authors": [
         {
+            "name": "Ionuț Staicu",
+            "email": "github@iamntz.com"
+        },
+        {
             "name": "Kaloyan",
             "email": "kaloqn665@gmail.com"
         }
