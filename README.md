@@ -4,7 +4,7 @@ _(this is an extension of [Carbon Fields](http://carbonfields.net/) plugin)_
 
 Adds a `urlpicker` field type to Carbon Fields. Install using composer:
 ```cli
-composer require Kaloyan98/carbon-fields-urlpicker
+composer require kyosfiov/carbon-fields-urlpicker
 ```
 
 (first, make sure you have `"minimum-stability": "dev"` set in `composer.json`)
@@ -19,10 +19,6 @@ url: the actual URL
 anchor: the text anchor (might be blank)
 blank: wether the link should open in a new window or not
 ```
-
-## Demo
-
-https://img.iamntz.com/jing/video_2017-09-01__12_22.mp4
 
 ## Example
 
@@ -39,7 +35,7 @@ function crb_url_picker_test() {
   Container::make( 'post_meta', 'URL Picker Test' )
     ->add_fields( array(
       Field::make( 'urlpicker', 'crb_my_link', 'URL Picker Test' )
-      ->set_help_text( "This is a test of the URL picker." )
+      	->set_help_text( "This is a test of the URL picker." )
     ));
 }
 ```
@@ -48,7 +44,42 @@ function crb_url_picker_test() {
 
 ```php
 <?php $my_link = carbon_get_the_post_meta( 'crb_my_link' ); ?>
-<a href="<?= $my_link[url] ?>"<?= ( $my_link[blank] ? ' target="_blank"' : '') ?>><?= $my_link[anchor] ?></a>
+<a href="<?php $my_link[url] ?>"<?php ( $my_link[blank] ? ' target="_blank"' : '') ?>><?php $my_link[anchor] ?></a>
 ```
 
 Note that the `anchor` field will return `0` or `1`, depending on whether the checkbox is ticked next to "Open link in a new tab".
+
+### Gutenberg Integration
+
+```php
+use Carbon_Fields\Block;
+
+Block::make( __( 'My Shiny Gutenberg Block' ) )
+    ->add_fields( array(
+        Field::make( 'urlpicker', 'url_data', __( 'Link' ) ),
+        Field::make( 'image', 'image', __( 'Block Image' ) ),
+        Field::make( 'rich_text', 'content', __( 'Block Content' ) ),
+    ) )
+    ->set_render_callback( function ( $block ) {
+        ?>
+
+        <div class="block">
+            <div class="block__heading">
+            	<?php
+            	$link_data = $block['url_data'];
+            	?>
+            	<a href="<?php $link_data['url'] ?>"<?php ( $link_data['blank'] ? ' target="_blank"' : '') ?>><?php $link_data['anchor'] ?></a>
+            </div><!-- /.block__heading -->
+
+            <div class="block__image">
+                <?php echo wp_get_attachment_image( $block['image'], 'full' ); ?>
+            </div><!-- /.block__image -->
+
+            <div class="block__content">
+                <?php echo apply_filters( 'the_content', $block['content'] ); ?>
+            </div><!-- /.block__content -->
+        </div><!-- /.block -->
+
+        <?php
+    } );
+```
