@@ -53,10 +53,8 @@ class UrlPickerField extends Component {
 		};
 
 		// merge the objects
-		if (field.value && field.value.url) {
-			fieldData = {...fieldData, ...field.value};
-		} else if (value && value.url) {
-			fieldData = {...fieldData, ...value};
+		if (value.url) {
+			fieldData = {...value};
 		}
 
 		return(

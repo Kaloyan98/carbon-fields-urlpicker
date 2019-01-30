@@ -27,10 +27,24 @@ class UrlPicker_Field extends Field
 			'blank' => (bool) $this->blank
 		]));
 
+		// init the text domain
+		add_action( 'after_setup_theme', array( $this, 'load_textdomain' ), 9999 );
+
 		remove_action('carbonfields_urlpicker_get_tinymce_popup', [$this, 'get_tinymce_popup']);
 		add_action('carbonfields_urlpicker_get_tinymce_popup', [$this, 'get_tinymce_popup']);
 
 		parent::__construct($type, $name, $label);
+	}
+
+	/**
+	 * Load the plugin textdomain.
+	 */
+	public function load_textdomain() {
+		$dir = \Carbon_Field_UrlPicker\DIR . '/languages/';
+		$domain = 'carbon-fields-urlpicker';
+		$locale = get_locale();
+		$path = $dir . $domain . '-' . $locale . '.mo';
+		load_textdomain( $domain, $path );
 	}
 
 	/**
